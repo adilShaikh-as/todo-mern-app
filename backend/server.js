@@ -8,7 +8,16 @@ require("dotenv").config();
 const app = express();
 
 // 2️⃣ Middlewares
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://todo-mern-app-amber.vercel.app"
+    ],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+  })
+);
 app.use(express.json());
 
 // 3️⃣ Routes import karo
