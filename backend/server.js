@@ -1,32 +1,39 @@
+// server.js
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 
+// 1️⃣ Pehle app create karo
 const app = express();
 
-// Middlewares
+// 2️⃣ Middlewares
 app.use(cors());
 app.use(express.json());
 
-// Mongo URI (use your own from MongoDB Atlas or local)
-const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/todo_db";
+// 3️⃣ Routes import karo
+const authRoutes = require("./routes/authRoutes");
+const taskRoutes = require("./routes/taskRoutes");
 
-// Connect to MongoDB
+// 4️⃣ Routes use karo
+app.use("/api/auth", authRoutes);
+app.use("/api/tasks", taskRoutes);
+
+// 5️⃣ MongoDB connection
+const MONGO_URI =
+  process.env.MONGO_URI || "mongodb://127.0.0.1:27017/todo_db";
+
 mongoose
   .connect(MONGO_URI)
   .then(() => console.log("✅ Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
-// Basic test route
+// 6️⃣ Test route
 app.get("/", (req, res) => {
   res.send("To-Do API is running...");
 });
 
-// Import task routes
-const taskRoutes = require("./routes/taskRoutes");
-app.use("/api/tasks", taskRoutes);
-
+// 7️⃣ Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
