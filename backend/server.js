@@ -4,46 +4,52 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 
-// 1️⃣ Pehle app create karo
 const app = express();
 
-// 2️⃣ Middlewares
+// CORS
 app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://todo-mern-app-amber.vercel.app"
+      "https://todo-mern-app-amber.vercel.app",
     ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"]
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
 app.use(express.json());
 
-// 3️⃣ Routes import karo
+// Routes
 const authRoutes = require("./routes/authRoutes");
 const taskRoutes = require("./routes/taskRoutes");
 
-// 4️⃣ Routes use karo
 app.use("/api/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);
 
-// 5️⃣ MongoDB connection
+// Mongo URI
 const MONGO_URI =
   process.env.MONGO_URI || "mongodb://127.0.0.1:27017/todo_db";
 
-mongoose
-  .connect(MONGO_URI)
-  .then(() => console.log("✅ Connected to MongoDB"))
-  .catch((err) => console.error("MongoDB connection error:", err));
-
-// 6️⃣ Test route
-app.get("/", (req, res) => {
-  res.send("To-Do API is running...");
-});
-
-// 7️⃣ Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
+
+// ✅ App ko tabhi start karo jab Mongo connect ho jaye
+async function startServer() {
+  try {
+    console.log("Connecting to MongoDB...");
+    await mongoose.connect(MONGO_URI);
+    console.log("✅ Connected to MongoDB");
+
+    app.get("/", (req, res) => {
+      res.send("To-Do API is running...");
+    });
+
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
+    });
+  } catch (err) {
+    console.error("❌ MongoDB connection error:", err);
+  }
+}
+
+startServer();
