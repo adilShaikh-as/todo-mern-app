@@ -1,12 +1,13 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/tasks";
+// Use ONLY hosted backend URL from environment variable
+const API_URL = import.meta.env.VITE_API_URL + "/api/tasks";
 
 const api = axios.create({
   baseURL: API_URL,
 });
 
-// har request se pehle token header me daal do
+// Add token to every request
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
